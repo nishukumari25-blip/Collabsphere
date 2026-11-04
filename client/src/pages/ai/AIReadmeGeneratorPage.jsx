@@ -107,7 +107,7 @@ export const AIReadmeGeneratorPage = () => {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1.3fr', gap: '2rem', alignItems: 'flex-start' }}>
+      <div className="ai-readme-grid">
         {/* Left: Input Specification Form */}
         <div className="card" style={{ padding: '1.75rem' }}>
           <form onSubmit={handleGenerate}>

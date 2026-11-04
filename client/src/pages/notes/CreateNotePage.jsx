@@ -143,7 +143,7 @@ export const CreateNotePage = () => {
 
       {/* Note Meta inputs */}
       <div className="card" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '1rem' }}>
+        <div className="form-grid-3">
           <div className="form-group" style={{ margin: 0 }}>
             <label className="form-label">Note Title *</label>
             <input
@@ -254,7 +254,7 @@ export const CreateNotePage = () => {
         )}
 
         {activeTab === 'split' && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', minHeight: '500px' }}>
+          <div className="split-editor-grid">
             <textarea
               name="content"
               rows={22}

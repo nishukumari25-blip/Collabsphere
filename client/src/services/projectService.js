@@ -26,8 +26,9 @@ export const projectService = {
     return res.data;
   },
 
-  async togglePublicShare(id, enabled) {
-    const res = await api.post(`/projects/${id}/share-token`, { enabled });
+  async togglePublicShare(id, enabledOrPayload) {
+    const payload = typeof enabledOrPayload === 'object' ? enabledOrPayload : { enabled: enabledOrPayload };
+    const res = await api.post(`/projects/${id}/share-token`, payload);
     return res.data;
   },
 

@@ -5,6 +5,9 @@ import File from '../models/File.js';
 import Activity from '../models/Activity.js';
 import { logActivity } from '../services/activityService.js';
 
+// Helper to safely escape user-provided strings for RegExp
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // @desc    Get all projects for current user (as owner or member)
 // @route   GET /api/projects
 // @access  Private
@@ -27,13 +30,14 @@ export const getProjects = async (req, res, next) => {
       query.visibility = visibility;
     }
 
-    if (search) {
+    if (search && search.trim()) {
+      const safeSearch = escapeRegex(search.trim());
       query.$and = [
         {
           $or: [
-            { name: { $regex: search, $options: 'i' } },
-            { description: { $regex: search, $options: 'i' } },
-            { technologies: { $in: [new RegExp(search, 'i')] } }
+            { name: { $regex: safeSearch, $options: 'i' } },
+            { description: { $regex: safeSearch, $options: 'i' } },
+            { technologies: { $in: [new RegExp(safeSearch, 'i')] } }
           ]
         }
       ];
@@ -228,11 +232,11 @@ export const deleteProject = async (req, res, next) => {
 // @access  Private (ADMIN or OWNER)
 export const togglePublicShare = async (req, res, next) => {
   try {
-    const { enabled } = req.body;
+    const { enabled, regenerate } = req.body;
     const project = req.project;
 
     if (enabled) {
-      if (!project.publicShare.shareToken) {
+      if (!project.publicShare.shareToken || regenerate) {
         project.publicShare.shareToken = crypto.randomBytes(16).toString('hex');
       }
       project.publicShare.enabled = true;

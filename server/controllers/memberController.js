@@ -242,6 +242,14 @@ export const removeMember = async (req, res, next) => {
       });
     }
 
+    const targetMember = project.members[memberIndex];
+    if (targetMember.role === 'ADMIN' && req.projectRole !== 'OWNER' && !isSelf) {
+      return res.status(403).json({
+        success: false,
+        message: 'Only the project OWNER can remove ADMIN members'
+      });
+    }
+
     project.members.splice(memberIndex, 1);
     await project.save();
 

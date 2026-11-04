@@ -191,7 +191,7 @@ export const MainDashboard = () => {
       </div>
 
       {/* Main Grid: Projects & Recent Timeline */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
+      <div className="content-sidebar-grid">
         {/* Active Projects List */}
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>

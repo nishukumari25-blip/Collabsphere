@@ -12,11 +12,13 @@ import {
   Sparkles
 } from 'lucide-react';
 import { noteService } from '../../services/noteService';
+import { geminiService } from '../../services/geminiService';
 import { useAuth } from '../../context/AuthContext';
 import { useProject } from '../../context/ProjectContext';
 import { useToast } from '../../context/ToastContext';
 import { CategoryBadge } from '../../components/Badge';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
+import { Modal } from '../../components/Modal';
 import { DetailsSkeleton } from '../../components/LoadingSkeleton';
 
 export const NotePreviewPage = () => {
@@ -31,6 +33,12 @@ export const NotePreviewPage = () => {
   const [copied, setCopied] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  // Gemini AI Explain Note states
+  const [aiExplaining, setAiExplaining] = useState(false);
+  const [aiModalOpen, setAiModalOpen] = useState(false);
+  const [aiExplanation, setAiExplanation] = useState('');
+  const [copiedAi, setCopiedAi] = useState(false);
 
   useEffect(() => {
     const fetchNote = async () => {
@@ -57,6 +65,37 @@ export const NotePreviewPage = () => {
     setCopied(true);
     toast.success('Raw markdown copied to clipboard');
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleExplainNote = async () => {
+    if (!note?.content?.trim()) {
+      toast.warning('This note has no written body to explain.');
+      return;
+    }
+    setAiExplaining(true);
+    setAiModalOpen(true);
+    try {
+      const res = await geminiService.explainNote({
+        title: note.title,
+        content: note.content,
+        projectId
+      });
+      if (res.success && res.result) {
+        setAiExplanation(res.result);
+      }
+    } catch (err) {
+      toast.error(err.message || 'Failed to explain note with Gemini AI');
+    } finally {
+      setAiExplaining(false);
+    }
+  };
+
+  const handleCopyAiExplanation = () => {
+    if (!aiExplanation) return;
+    navigator.clipboard.writeText(aiExplanation);
+    setCopiedAi(true);
+    toast.success('AI explanation copied to clipboard');
+    setTimeout(() => setCopiedAi(false), 2000);
   };
 
   const handleDelete = async () => {
@@ -93,7 +132,17 @@ export const NotePreviewPage = () => {
           <span>All Notes</span>
         </button>
 
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <button
+            onClick={handleExplainNote}
+            className="btn btn-secondary btn-sm"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: 'var(--primary)' }}
+            disabled={aiExplaining}
+          >
+            <Sparkles size={14} />
+            <span>{aiExplaining ? 'Analyzing...' : 'Explain Note'}</span>
+          </button>
+
           <button onClick={handleCopyMarkdown} className="btn btn-secondary btn-sm">
             {copied ? <Check size={14} color="var(--success)" /> : <Copy size={14} />}
             <span>{copied ? 'Copied' : 'Copy Markdown'}</span>
@@ -176,6 +225,67 @@ export const NotePreviewPage = () => {
         isDanger={true}
         loading={deleteLoading}
       />
+
+      {/* Gemini AI Note Explanation Modal */}
+      <Modal
+        isOpen={aiModalOpen}
+        onClose={() => setAiModalOpen(false)}
+        title="Gemini AI Note Analysis"
+        maxWidth="720px"
+      >
+        <div>
+          {aiExplaining ? (
+            <div style={{ textAlign: 'center', padding: '3rem 1.5rem' }}>
+              <div
+                style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '50%',
+                  border: '3px solid var(--border-light)',
+                  borderTopColor: 'var(--primary)',
+                  animation: 'spin 1s linear infinite',
+                  margin: '0 auto 1.25rem'
+                }}
+              />
+              <h4 style={{ fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.4rem' }}>
+                Analyzing Note with Gemini AI...
+              </h4>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                Synthesizing key technical concepts, context, and actionable takeaways.
+              </p>
+            </div>
+          ) : aiExplanation ? (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+                <button
+                  type="button"
+                  onClick={handleCopyAiExplanation}
+                  className="btn btn-secondary btn-sm"
+                >
+                  {copiedAi ? <Check size={14} color="var(--success)" /> : <Copy size={14} />}
+                  <span>{copiedAi ? 'Copied' : 'Copy Explanation'}</span>
+                </button>
+              </div>
+              <div
+                className="markdown-body"
+                style={{
+                  maxHeight: '60vh',
+                  overflowY: 'auto',
+                  padding: '1.25rem',
+                  backgroundColor: 'var(--bg-muted)',
+                  borderRadius: 'var(--radius-sm)'
+                }}
+              >
+                <ReactMarkdown>{aiExplanation}</ReactMarkdown>
+              </div>
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
+              No explanation generated yet.
+            </div>
+          )}
+        </div>
+      </Modal>
     </div>
   );
 };

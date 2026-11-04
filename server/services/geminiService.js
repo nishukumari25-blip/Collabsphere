@@ -151,6 +151,22 @@ Return the full improved note in clean Markdown.`;
 };
 
 /**
+ * 5. Explain Markdown Notes
+ */
+export const explainNoteService = async ({ title, content }) => {
+  const systemInstruction = `You are an expert technical educator and documentation specialist.
+Analyze and explain the provided Markdown note in clear, accessible terms for developers and engineering team members.
+Structure your explanation in clean, professional Markdown with:
+1. **Summary & Objective**: High-level synopsis of the note's topic and core purpose.
+2. **Key Concepts & Breakdown**: Clarification of main concepts, architectures, or technical specifications described.
+3. **Engineering Relevance & Context**: Why this note matters in the context of the software development lifecycle.
+4. **Actionable Takeaways & Next Steps**: Practical points or decisions engineers should implement.`;
+
+  const userPrompt = `Note Title: ${title || 'Untitled Note'}\n\nNote Content:\n${content}`;
+  return await runGemini(systemInstruction, userPrompt);
+};
+
+/**
  * 5. Code Review
  */
 export const reviewCodeService = async ({ code, language = 'javascript' }) => {

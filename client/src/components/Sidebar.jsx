@@ -17,7 +17,8 @@ import {
   LogOut,
   ChevronRight,
   BookOpen,
-  CheckSquare
+  CheckSquare,
+  X
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useProject } from '../context/ProjectContext';
@@ -39,13 +40,21 @@ export const Sidebar = ({ isOpen, onClose }) => {
   return (
     <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
       {/* Brand Header */}
-      <div className="sidebar-header">
+      <div className="sidebar-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <NavLink to="/dashboard" className="brand-logo" onClick={onClose}>
           <div className="brand-icon-box">
             <Sparkles size={18} />
           </div>
           <span>CollabSphere</span>
         </NavLink>
+        <button
+          onClick={onClose}
+          className="btn-icon mobile-sidebar-close"
+          aria-label="Close sidebar"
+          style={{ color: 'var(--text-light)' }}
+        >
+          <X size={18} />
+        </button>
       </div>
 
       <div className="sidebar-scroll">

@@ -67,6 +67,6 @@ router.route('/:id/members/:userId')
     ],
     updateMemberRole
   )
-  .delete(protect, removeMember);
+  .delete(protect, requireProjectRole('VIEWER'), removeMember);
 
 export default router;

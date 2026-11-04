@@ -1,6 +1,9 @@
 import Note from '../models/Note.js';
 import { logActivity } from '../services/activityService.js';
 
+// Helper to safely escape user-provided strings for RegExp
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // @desc    Get all notes for a project
 // @route   GET /api/projects/:projectId/notes
 // @access  Private (VIEWER+)
@@ -15,11 +18,12 @@ export const getNotes = async (req, res, next) => {
       query.category = category;
     }
 
-    if (search) {
+    if (search && search.trim()) {
+      const safeSearch = escapeRegex(search.trim());
       query.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { content: { $regex: search, $options: 'i' } },
-        { tags: { $in: [new RegExp(search, 'i')] } }
+        { title: { $regex: safeSearch, $options: 'i' } },
+        { content: { $regex: safeSearch, $options: 'i' } },
+        { tags: { $in: [new RegExp(safeSearch, 'i')] } }
       ];
     }
 

@@ -25,11 +25,8 @@ export const ForgotPasswordPage = () => {
     try {
       const res = await authService.forgotPassword(email);
       setSuccessMsg(res.message);
-      if (res.resetToken) {
-        setToken(res.resetToken);
-      }
       setStep(2);
-      toast.success('Password reset token generated');
+      toast.success('If an account exists, reset instructions have been sent.');
     } catch (err) {
       setError(err.message || 'Failed to request password reset');
     } finally {
@@ -90,8 +87,8 @@ export const ForgotPasswordPage = () => {
           </h2>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
             {step === 1
-              ? 'Enter your registered email address to receive a reset token.'
-              : 'Enter the verification token and your new secure password.'}
+              ? 'Enter your registered email address to receive password reset instructions.'
+              : 'Enter the verification token from your email and your new secure password.'}
           </p>
         </div>
 
@@ -154,7 +151,7 @@ export const ForgotPasswordPage = () => {
               disabled={loading}
               style={{ width: '100%', marginTop: '0.5rem' }}
             >
-              {loading ? 'Sending Request...' : 'Generate Reset Token'}
+              {loading ? 'Sending Request...' : 'Send Reset Instructions'}
             </button>
           </form>
         ) : (

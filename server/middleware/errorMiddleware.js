@@ -5,7 +5,7 @@ export const notFound = (req, res, next) => {
 };
 
 export const errorHandler = (err, req, res, next) => {
-  let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  let statusCode = err.status || err.statusCode || (res.statusCode === 200 ? 500 : res.statusCode);
   let message = err.message || 'Internal Server Error';
 
   // Mongoose bad ObjectId (CastError)
@@ -29,7 +29,7 @@ export const errorHandler = (err, req, res, next) => {
       .join(', ');
   }
 
-  // Multer errors
+  // Multer errors & file upload restrictions
   if (err.name === 'MulterError') {
     statusCode = 400;
     if (err.code === 'LIMIT_FILE_SIZE') {
@@ -37,6 +37,10 @@ export const errorHandler = (err, req, res, next) => {
     } else {
       message = `File upload error: ${err.message}`;
     }
+  } else if (err.name === 'UnsupportedFileTypeError' || (err.message && err.message.startsWith('Unsupported file type'))) {
+    statusCode = 400;
+  } else if (err.message && (err.message.includes('CORS') || err.message.includes('Not allowed by CORS'))) {
+    statusCode = 403;
   }
 
   console.error(`[Error] ${req.method} ${req.originalUrl}:`, err);

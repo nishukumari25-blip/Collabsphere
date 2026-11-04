@@ -34,20 +34,41 @@ app.use(
 );
 
 // CORS configuration
-const allowedOrigins = [
-  process.env.CLIENT_URL || 'http://localhost:5173',
+const configuredClientUrl = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.replace(/\/+$/, '')
+  : 'http://localhost:5173';
+
+const allowedOrigins = new Set([
+  configuredClientUrl,
   'http://localhost:5173',
-  'http://127.0.0.1:5173'
-];
+  'http://127.0.0.1:5173',
+  'http://localhost:5174',
+  'http://127.0.0.1:5174'
+]);
+
+if (process.env.CLIENT_URL && process.env.CLIENT_URL.includes(',')) {
+  process.env.CLIENT_URL.split(',').forEach((url) => {
+    const trimmed = url.trim().replace(/\/+$/, '');
+    if (trimmed) {
+      allowedOrigins.add(trimmed);
+    }
+  });
+}
 
 app.use(
   cors({
     origin: (origin, callback) => {
       // allow requests with no origin (like mobile apps, curl, or Postman)
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin) {
         return callback(null, true);
       }
-      return callback(null, true); // permissive for local dev
+      const normalizedOrigin = origin.replace(/\/+$/, '');
+      if (allowedOrigins.has(normalizedOrigin)) {
+        return callback(null, true);
+      }
+      const error = new Error(`CORS blocked for origin: ${origin}`);
+      error.status = 403;
+      return callback(error);
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],

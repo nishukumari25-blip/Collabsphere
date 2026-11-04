@@ -177,7 +177,7 @@ export const PublicSharePage = () => {
 
       {/* Tab Contents */}
       {activeTab === 'overview' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
+        <div className="content-sidebar-grid">
           <div>
             <div className="card" style={{ marginBottom: '1.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
@@ -191,7 +191,7 @@ export const PublicSharePage = () => {
 
             <div className="card">
               <h3 className="card-title" style={{ marginBottom: '1rem' }}>Project Statistics</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', textAlign: 'center' }}>
+              <div className="stats-grid-3">
                 <div style={{ padding: '1rem', backgroundColor: 'var(--bg-muted)', borderRadius: 'var(--radius-sm)' }}>
                   <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--primary)' }}>{stats?.membersCount || 1}</div>
                   <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>TEAM MEMBERS</div>
@@ -283,7 +283,7 @@ export const PublicSharePage = () => {
               description="The project team has not published any notes for this project yet."
             />
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '1.5rem', minHeight: '500px' }}>
+            <div className="split-notes-grid">
               <div className="card" style={{ padding: '1rem', overflowY: 'auto' }}>
                 <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
                   Project Notes

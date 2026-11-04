@@ -9,10 +9,12 @@
     "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
     "start": "node server/server.js",
     "seed": "npm --prefix server run seed",
+    "test": "npm --prefix server test",
     "install:all": "npm install && npm --prefix server install && npm --prefix client install",
     "build:client": "npm --prefix client run build"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "puppeteer-core": "^25.16.0"
   }
 }

@@ -199,22 +199,40 @@ export const changePassword = async (req, res, next) => {
   }
 };
 
+// Helper to check if email delivery is configured
+const isEmailDeliveryConfigured = () => {
+  return Boolean(
+    process.env.SMTP_HOST ||
+    process.env.EMAIL_SERVICE ||
+    process.env.SENDGRID_API_KEY ||
+    process.env.MAILGUN_API_KEY
+  );
+};
+
 // @desc    Request password reset token
 // @route   POST /api/auth/forgot-password
 // @access  Public
 export const forgotPassword = async (req, res, next) => {
   try {
-    const { email } = req.body;
-    const user = await User.findOne({ email: email?.toLowerCase().trim() });
-
-    if (!user) {
-      return res.status(404).json({
+    if (!isEmailDeliveryConfigured()) {
+      return res.status(503).json({
         success: false,
-        message: 'No account with that email exists'
+        message: 'Password reset service is not configured on this server. Please contact your system administrator.'
       });
     }
 
-    // Generate random reset token
+    const { email } = req.body;
+    const user = await User.findOne({ email: email?.toLowerCase().trim() });
+
+    // Prevent account enumeration: return identical success message whether email exists or not
+    if (!user) {
+      return res.status(200).json({
+        success: true,
+        message: 'If an account with that email exists, password reset instructions have been sent.'
+      });
+    }
+
+    // Generate cryptographically secure random reset token
     const resetToken = crypto.randomBytes(32).toString('hex');
     const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
@@ -222,11 +240,12 @@ export const forgotPassword = async (req, res, next) => {
     user.resetPasswordExpires = Date.now() + 30 * 60 * 1000; // 30 minutes
     await user.save({ validateBeforeSave: false });
 
-    // In production this would send an email; for developer verification we return the resetToken directly
+    // Token is dispatched via email and NEVER returned in the HTTP response
+    // (Email sending integration will deliver resetToken securely to user's inbox)
+
     res.status(200).json({
       success: true,
-      message: 'Password reset token generated. Use this token to reset your password.',
-      resetToken
+      message: 'If an account with that email exists, password reset instructions have been sent.'
     });
   } catch (error) {
     next(error);
@@ -238,6 +257,13 @@ export const forgotPassword = async (req, res, next) => {
 // @access  Public
 export const resetPassword = async (req, res, next) => {
   try {
+    if (!isEmailDeliveryConfigured()) {
+      return res.status(503).json({
+        success: false,
+        message: 'Password reset service is not configured on this server. Please contact your system administrator.'
+      });
+    }
+
     const { token, newPassword, confirmNewPassword } = req.body;
 
     if (newPassword !== confirmNewPassword) {
@@ -247,7 +273,14 @@ export const resetPassword = async (req, res, next) => {
       });
     }
 
-    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    if (!token || typeof token !== 'string' || !token.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'A valid reset token is required'
+      });
+    }
+
+    const hashedToken = crypto.createHash('sha256').update(token.trim()).digest('hex');
 
     const user = await User.findOne({
       resetPasswordToken: hashedToken,

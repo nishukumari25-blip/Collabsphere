@@ -5,6 +5,7 @@ import {
   generateDocs,
   generateReadme,
   improveNote,
+  explainNote,
   reviewCode
 } from '../controllers/geminiController.js';
 import { protect } from '../middleware/authMiddleware.js';
@@ -40,6 +41,12 @@ router.post(
   '/improve-note',
   [body('content').trim().notEmpty().withMessage('Note content is required'), validate],
   improveNote
+);
+
+router.post(
+  '/explain-note',
+  [body('content').trim().notEmpty().withMessage('Note content is required'), validate],
+  explainNote
 );
 
 router.post(

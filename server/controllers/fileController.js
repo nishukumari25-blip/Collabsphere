@@ -9,6 +9,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const uploadDir = path.resolve(__dirname, '../uploads');
 
+// Helper to safely escape user-provided strings for RegExp
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // @desc    Get all files for a project
 // @route   GET /api/projects/:projectId/files
 // @access  Private (VIEWER+)
@@ -23,8 +26,8 @@ export const getFiles = async (req, res, next) => {
       query.category = category;
     }
 
-    if (search) {
-      query.originalName = { $regex: search, $options: 'i' };
+    if (search && search.trim()) {
+      query.originalName = { $regex: escapeRegex(search.trim()), $options: 'i' };
     }
 
     const files = await File.find(query)

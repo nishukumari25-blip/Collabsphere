@@ -112,7 +112,7 @@ export const CreateProjectPage = () => {
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+          <div className="form-grid-2">
             <div className="form-group">
               <label className="form-label">Visibility</label>
               <select

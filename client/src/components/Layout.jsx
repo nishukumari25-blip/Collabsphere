@@ -8,6 +8,13 @@ export const Layout = () => {
 
   return (
     <div className="app-layout">
+      {sidebarOpen && (
+        <div
+          className="sidebar-backdrop"
+          onClick={() => setSidebarOpen(false)}
+          aria-label="Close sidebar"
+        />
+      )}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="main-wrapper">
         <Navbar onToggleSidebar={() => setSidebarOpen((prev) => !prev)} />

@@ -254,7 +254,7 @@ export const ContributionAnalyticsPage = () => {
       </div>
 
       {/* Category Breakdowns: Notes & Files */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+      <div className="form-grid-2" style={{ gap: '2rem' }}>
         {/* Notes by Category */}
         <div className="card">
           <h3 className="card-title" style={{ marginBottom: '1rem' }}>Notes Distribution by Category</h3>

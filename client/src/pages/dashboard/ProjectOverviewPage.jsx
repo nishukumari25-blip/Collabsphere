@@ -182,7 +182,7 @@ export const ProjectOverviewPage = () => {
       </div>
 
       {/* Main Grid: Details & Team */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
+      <div className="content-sidebar-grid">
         <div>
           {/* Goals and Architecture Card */}
           <div className="card" style={{ marginBottom: '1.5rem' }}>

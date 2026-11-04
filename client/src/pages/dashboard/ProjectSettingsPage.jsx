@@ -8,7 +8,8 @@ import {
   Copy,
   Check,
   Save,
-  AlertCircle
+  AlertCircle,
+  RefreshCw
 } from 'lucide-react';
 import { projectService } from '../../services/projectService';
 import { useProject } from '../../context/ProjectContext';
@@ -112,6 +113,20 @@ export const ProjectSettingsPage = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleRegenerateShareUrl = async () => {
+    try {
+      const res = await projectService.togglePublicShare(projectId, { enabled: true, regenerate: true });
+      if (res.success) {
+        setPublicShareEnabled(true);
+        setShareToken(res.publicShare.shareToken);
+        toast.success('Share link regenerated; previous link has been revoked');
+        loadProject(projectId);
+      }
+    } catch (err) {
+      toast.error(err.message || 'Failed to regenerate public link');
+    }
+  };
+
   const handleDeleteProject = async () => {
     setDeleteLoading(true);
     try {
@@ -169,7 +184,7 @@ export const ProjectSettingsPage = () => {
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+          <div className="form-grid-2">
             <div className="form-group">
               <label className="form-label">Project Status</label>
               <select
@@ -284,6 +299,10 @@ export const ProjectSettingsPage = () => {
               <button onClick={handleCopyShareUrl} className="btn btn-secondary">
                 {copied ? <Check size={16} color="var(--success)" /> : <Copy size={16} />}
                 <span>{copied ? 'Copied' : 'Copy'}</span>
+              </button>
+              <button onClick={handleRegenerateShareUrl} className="btn btn-secondary" title="Revoke current link and generate new token">
+                <RefreshCw size={16} />
+                <span>Regenerate</span>
               </button>
             </div>
           </div>

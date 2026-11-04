@@ -46,12 +46,12 @@ const fileFilter = (req, file, cb) => {
   if (ALLOWED_EXTENSIONS.has(ext)) {
     cb(null, true);
   } else {
-    cb(
-      new Error(
-        `Unsupported file type "${ext}". Supported types: .js, .jsx, .ts, .tsx, .html, .css, .json, .py, .md, .txt, .png, .jpg, .jpeg, .webp, .pdf`
-      ),
-      false
+    const error = new Error(
+      `Unsupported file type "${ext}". Supported types: .js, .jsx, .ts, .tsx, .html, .css, .json, .py, .md, .txt, .png, .jpg, .jpeg, .webp, .pdf`
     );
+    error.name = 'UnsupportedFileTypeError';
+    error.status = 400;
+    cb(error, false);
   }
 };
 

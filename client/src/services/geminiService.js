@@ -21,6 +21,11 @@ export const geminiService = {
     return res.data;
   },
 
+  async explainNote(data) {
+    const res = await api.post('/gemini/explain-note', data);
+    return res.data;
+  },
+
   async reviewCode(data) {
     const res = await api.post('/gemini/review-code', data);
     return res.data;

@@ -35,8 +35,7 @@ export const Navbar = ({ onToggleSidebar }) => {
       <div className="topbar-left">
         <button
           onClick={onToggleSidebar}
-          className="btn-icon"
-          style={{ display: 'none' }}
+          className="btn-icon mobile-menu-btn"
           id="mobile-menu-btn"
           aria-label="Toggle navigation"
         >

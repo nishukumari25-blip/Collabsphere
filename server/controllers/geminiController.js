@@ -3,6 +3,7 @@ import {
   generateDocsService,
   generateReadmeService,
   improveNoteService,
+  explainNoteService,
   reviewCodeService
 } from '../services/geminiService.js';
 import { logActivity } from '../services/activityService.js';
@@ -176,6 +177,47 @@ export const improveNote = async (req, res, next) => {
     res.status(error.status || 500).json({
       success: false,
       message: error.message || 'Failed to improve note with Gemini AI'
+    });
+  }
+};
+
+// @desc    Explain Markdown note with Gemini
+// @route   POST /api/gemini/explain-note
+// @access  Private
+export const explainNote = async (req, res, next) => {
+  try {
+    const { title, content, projectId } = req.body;
+
+    if (!content || !content.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Note content is required to explain'
+      });
+    }
+
+    const explanation = await explainNoteService({
+      title: title || 'Untitled Note',
+      content
+    });
+
+    if (projectId) {
+      await logActivity({
+        projectId,
+        userId: req.user._id,
+        action: 'ai_request',
+        entityType: 'ai',
+        details: { tool: 'explain_note', title: title || 'Untitled Note' }
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      result: explanation
+    });
+  } catch (error) {
+    res.status(error.status || 500).json({
+      success: false,
+      message: error.message || 'Failed to explain note with Gemini AI'
     });
   }
 };
