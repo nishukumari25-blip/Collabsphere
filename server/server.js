@@ -83,9 +83,9 @@ app.use(
 
       // Allow CollabSphere Vercel preview deployments
       const isVercelPreview =
-        /^https:\/\/collabspherenew1-[a-z0-9-]+-nishu9\.vercel\.app$/.test(
-          normalizedOrigin
-        );
+  /^https:\/\/collabsphere(?:new1)?-[a-z0-9-]+-nishu9\.vercel\.app$/.test(
+    normalizedOrigin
+  );
 
       if (
         allowedOrigins.has(normalizedOrigin) ||
