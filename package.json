@@ -10,6 +10,7 @@
     "start": "node server/server.js",
     "seed": "npm --prefix server run seed",
     "test": "npm --prefix server test",
+    "clean": "rm -rf client/dist dist build",
     "install:all": "npm install && npm --prefix server install && npm --prefix client install",
     "build:client": "npm --prefix client run build"
   },

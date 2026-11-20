@@ -1,7 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
 
 const getGenAIClient = () => {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GENAI_API_KEY;
   if (!apiKey || apiKey === 'your_gemini_api_key_here' || apiKey.trim() === '') {
     const error = new Error('GEMINI_API_KEY is not configured on the server. Please set your valid Google Gemini API key in server/.env.');
     error.status = 503;

@@ -43,7 +43,8 @@ const allowedOrigins = new Set([
   'http://localhost:5173',
   'http://127.0.0.1:5173',
   'http://localhost:5174',
-  'http://127.0.0.1:5174'
+  'http://127.0.0.1:5174',
+  'https://dev-v2.d1x9iq9nqly1of.amplifyapp.com'
 ]);
 
 if (process.env.CLIENT_URL && process.env.CLIENT_URL.includes(',')) {

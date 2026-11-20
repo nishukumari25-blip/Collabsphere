@@ -37,6 +37,7 @@ import { AICodeExplainerPage } from './pages/ai/AICodeExplainerPage';
 import { AIDocsGeneratorPage } from './pages/ai/AIDocsGeneratorPage';
 import { AIReadmeGeneratorPage } from './pages/ai/AIReadmeGeneratorPage';
 import { AICodeReviewPage } from './pages/ai/AICodeReviewPage';
+import { ProjectAnalyzerPage } from './pages/ai/ProjectAnalyzerPage';
 
 // Analytics & Activities
 import { ContributionAnalyticsPage } from './pages/analytics/ContributionAnalyticsPage';
@@ -60,6 +61,7 @@ export function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/share/:shareToken" element={<PublicSharePage />} />
+        <Route path="/analyzer" element={<ProjectAnalyzerPage />} />
       </Route>
 
       {/* Authenticated Workspace Pages */}
@@ -97,6 +99,7 @@ export function App() {
         <Route path="/ai/docs" element={<AIDocsGeneratorPage />} />
         <Route path="/ai/readme" element={<AIReadmeGeneratorPage />} />
         <Route path="/ai/review" element={<AICodeReviewPage />} />
+        <Route path="/ai/analyzer" element={<ProjectAnalyzerPage />} />
 
         {/* User Account & Notifications */}
         <Route path="/profile" element={<UserProfilePage />} />

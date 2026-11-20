@@ -3,6 +3,9 @@ node_modules/
 .DS_Store
 dist/
 build/
+**/dist/
+**/build/
 server/uploads/*
 !server/uploads/.gitkeep
 *.log
+
